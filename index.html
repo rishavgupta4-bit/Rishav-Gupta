@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <h1>Tic-Tac-Toe</h1>
+            <div class="setup-container">
+                <div class="setup-section">
+                    <h2>Game Mode</h2>
+                    <div class="btn-group">
+                        <button id="single-player-btn" class="btn active">Single Player</button>
+                        <button id="multi-player-btn" class="btn">Multiplayer</button>
+                    </div>
+                </div>
+
+                <div class="setup-section">
+                    <h2>Choose Your Side</h2>
+                    <div class="btn-group">
+                        <button id="player-x-btn" class="btn-symbol active">X</button>
+                        <button id="player-o-btn" class="btn-symbol">O</button>
+                    </div>
+                </div>
+
+                <div id="difficulty-section" class="setup-section">
+                    <h2>Difficulty</h2>
+                    <div class="btn-group">
+                        <button id="easy-btn" class="btn active" data-difficulty="easy">Easy</button>
+                        <button id="medium-btn" class="btn" data-difficulty="medium">Medium</button>
+                        <button id="hard-btn" class="btn" data-difficulty="hard">Hard</button>
+                    </div>
+                </div>
+
+                <button id="start-game-btn" class="btn btn-primary">Start Game</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <header>
+                <div class="header-left">
+                     <div id="score-container" class="score-container">
+                        <div class="score-item">
+                            <span class="score-label">Total</span>
+                            <span id="total-games" class="score-value">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Wins</span>
+                            <span id="wins" class="score-value">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Losses</span>
+                            <span id="losses" class="score-value">0</span>
+                        </div>
+                         <div class="score-item">
+                            <span class="score-label">Draws</span>
+                            <span id="draws" class="score-value">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div id="status-container" class="status-container">
+                        <p id="status-text">Player X's Turn</p>
+                        <p id="ai-reasoning-text"></p>
+                    </div>
+                    <div id="ai-thinking-toggle-container" class="ai-thinking-toggle-container">
+                        <input type="checkbox" id="ai-thinking-toggle">
+                        <label for="ai-thinking-toggle">Show AI Logic</label>
+                    </div>
+                </div>
+            </header>
+
+            <main>
+                <div id="board-container">
+                    <div id="board" class="board">
+                        <div class="cell" data-index="0"></div>
+                        <div class="cell" data-index="1"></div>
+                        <div class="cell" data-index="2"></div>
+                        <div class="cell" data-index="3"></div>
+                        <div class="cell" data-index="4"></div>
+                        <div class="cell" data-index="5"></div>
+                        <div class="cell" data-index="6"></div>
+                        <div class="cell" data-index="7"></div>
+                        <div class="cell" data-index="8"></div>
+                    </div>
+                    <svg id="win-line-svg" class="win-line-svg">
+                        <line id="win-line" class="win-line" />
+                    </svg>
+                </div>
+            </main>
+
+            <footer>
+                <button id="play-again-btn" class="btn">Play Again</button>
+                <button id="share-btn" class="btn">Share</button>
+                <button id="home-btn" class="btn">Home Page</button>
+            </footer>
+
+             <!-- Results Modal -->
+            <div id="results-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <p id="results-text"></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script type="module" src="index.tsx"></script>
+</body>
+</html>
