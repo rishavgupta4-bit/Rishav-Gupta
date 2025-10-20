@@ -1,0 +1,21 @@
+{
+  "name": "Tic-Tac-Toe AI",
+  "short_name": "TicTacToe AI",
+  "description": "A classic Tic-Tac-Toe game where you can challenge a smart AI opponent.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a011a",
+  "theme_color": "#1f033a",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

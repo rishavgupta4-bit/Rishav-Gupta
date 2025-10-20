@@ -1,5 +1,5 @@
 {
-  "name": "Copy of Tic-Tac-Toe",
-  "description": "This is a Tic-Tac-Toe Game. My first App Development.",
+  "name": "Tic-Tac-Toe AI",
+  "description": "A classic Tic-Tac-Toe game where you can challenge a smart AI opponent.",
   "requestFramePermissions": []
 }

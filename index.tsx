@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// --- STATE MANAGEMENT ---
+// --- TYPES & INTERFACES ---
 type PlayerSymbol = 'X' | 'O';
 type GameMode = 'single' | 'multi';
 type Difficulty = 'easy' | 'medium' | 'hard';
@@ -16,7 +16,6 @@ interface GameState {
     board: (PlayerSymbol | null)[];
     currentPlayer: PlayerSymbol;
     isGameOver: boolean;
-    showAiThinking: boolean;
     scores: {
         total: number;
         wins: number;
@@ -25,6 +24,25 @@ interface GameState {
     };
 }
 
+interface AdBreakConfig {
+    type: 'start' | 'pause' | 'next' | 'reward';
+    name: string;
+    beforeAd: () => void;
+    afterAd: () => void;
+    adError: (error: any) => void;
+}
+
+declare global {
+    interface Window {
+        adsbygoogle?: {
+            adBreak: (config: AdBreakConfig) => void;
+            push: (config: object) => void;
+        };
+    }
+}
+
+
+// --- STATE MANAGEMENT ---
 let gameState: GameState = {
     gameMode: 'single',
     playerSymbol: 'X',
@@ -33,7 +51,6 @@ let gameState: GameState = {
     board: Array(9).fill(null),
     currentPlayer: 'X',
     isGameOver: false,
-    showAiThinking: false,
     scores: {
         total: 0,
         wins: 0,
@@ -42,37 +59,37 @@ let gameState: GameState = {
     },
 };
 
-// --- DOM ELEMENTS ---
-const homeScreen = document.getElementById('home-screen')!;
-const gameScreen = document.getElementById('game-screen')!;
-const boardElement = document.getElementById('board')!;
-const cells = document.querySelectorAll('.cell');
-const statusText = document.getElementById('status-text')!;
+// --- DOM ELEMENTS (declared here, assigned in init) ---
+let homeScreen: HTMLElement;
+let gameScreen: HTMLElement;
+let boardElement: HTMLElement;
+let cells: NodeListOf<HTMLElement>;
+let statusText: HTMLElement;
 
 // Home Screen Elements
-const singlePlayerBtn = document.getElementById('single-player-btn')!;
-const multiPlayerBtn = document.getElementById('multi-player-btn')!;
-const playerXBtn = document.getElementById('player-x-btn')!;
-const playerOBtn = document.getElementById('player-o-btn')!;
-const difficultySection = document.getElementById('difficulty-section')!;
-const difficultyButtons = document.querySelectorAll('#difficulty-section .btn');
-const startGameBtn = document.getElementById('start-game-btn')!;
+let singlePlayerBtn: HTMLElement;
+let multiPlayerBtn: HTMLElement;
+let playerXBtn: HTMLElement;
+let playerOBtn: HTMLElement;
+let difficultySection: HTMLElement;
+let difficultyButtons: NodeListOf<Element>;
+let startGameBtn: HTMLElement;
 
 // Game Screen Elements
-const totalGamesEl = document.getElementById('total-games')!;
-const winsEl = document.getElementById('wins')!;
-const lossesEl = document.getElementById('losses')!;
-const drawsEl = document.getElementById('draws')!;
-const playAgainBtn = document.getElementById('play-again-btn')!;
-const homeBtn = document.getElementById('home-btn')!;
-const shareBtn = document.getElementById('share-btn')! as HTMLButtonElement;
-const winLineSvg = document.getElementById('win-line-svg')!;
-const winLine = document.getElementById('win-line') as unknown as SVGLineElement;
-const resultsModal = document.getElementById('results-modal')!;
-const resultsText = document.getElementById('results-text')!;
-const aiThinkingToggleContainer = document.getElementById('ai-thinking-toggle-container')!;
-const aiThinkingToggle = document.getElementById('ai-thinking-toggle') as HTMLInputElement;
-const aiReasoningText = document.getElementById('ai-reasoning-text')!;
+let totalGamesEl: HTMLElement;
+let winsEl: HTMLElement;
+let lossesEl: HTMLElement;
+let drawsEl: HTMLElement;
+let playAgainBtn: HTMLElement;
+let homeBtn: HTMLElement;
+let shareBtn: HTMLButtonElement;
+let winLineSvg: HTMLElement;
+let winLine: SVGLineElement;
+let resultsModal: HTMLElement;
+let resultsText: HTMLElement;
+
+// Ad Placeholders
+let interstitialAd: HTMLElement;
 
 
 // --- GAME LOGIC ---
@@ -132,7 +149,6 @@ function isBoardFull() {
 
 function endGame(result: 'X' | 'O' | 'draw', combo: number[] | null = null) {
     gameState.isGameOver = true;
-    aiReasoningText.textContent = ''; // Clear reasoning text on game end
     updateScores(result);
 
     let message = '';
@@ -165,10 +181,9 @@ function resetGame() {
     gameState.currentPlayer = 'X';
     winLineSvg.classList.remove('visible');
     cells.forEach(cell => {
-        cell.classList.remove('winning-cell', 'ai-move-highlight');
+        cell.classList.remove('winning-cell');
     });
     resultsModal.style.display = 'none';
-    aiReasoningText.textContent = '';
     renderBoard();
     updateStatus();
     
@@ -180,11 +195,47 @@ function resetGame() {
 function goToHomePage() {
     gameScreen.classList.remove('active');
     homeScreen.classList.add('active');
-    aiThinkingToggleContainer.style.display = 'none'; // Hide toggle on home
     resetGame();
     gameState.scores = { total: 0, wins: 0, losses: 0, draws: 0 };
     updateScoreboard();
 }
+
+// --- AD LOGIC ---
+function showInterstitialAd(callback: () => void) {
+    console.log('Attempting to show interstitial ad...');
+    
+    // Show a loading message overlay
+    interstitialAd.style.display = 'flex';
+
+    const adFinished = () => {
+        interstitialAd.style.display = 'none';
+        callback();
+    };
+
+    // Check if the AdSense API is available
+    if (window.adsbygoogle && typeof window.adsbygoogle.adBreak === 'function') {
+        try {
+            window.adsbygoogle.adBreak({
+                type: 'next', // Use 'next' for transitions like 'Play Again' or 'Home'
+                name: 'game-transition',
+                beforeAd: () => {}, // Game is already paused, so nothing needed here
+                afterAd: adFinished, // Called after the ad is closed by the user
+                adError: (error: any) => {
+                    console.error('Ad break error:', error);
+                    adFinished(); // Proceed with the game action even if the ad fails
+                }
+            });
+        } catch (e) {
+             console.error('Error calling adBreak:', e);
+             adFinished();
+        }
+    } else {
+        // Fallback for when the ad API isn't ready or is blocked (e.g., by an ad blocker)
+        console.warn('AdSense adBreak API not available. Skipping ad.');
+        setTimeout(adFinished, 500); // Simulate a small delay and then proceed
+    }
+}
+
 
 // --- AI LOGIC ---
 function aiMove() {
@@ -194,31 +245,12 @@ function aiMove() {
 
     if (gameState.difficulty === 'easy') {
         move = getEasyMove();
-        makeMove(move, gameState.aiSymbol);
     } else if (gameState.difficulty === 'medium') {
         move = getMediumMove();
-        makeMove(move, gameState.aiSymbol);
     } else { // hard
-        if (gameState.showAiThinking) {
-            const { move, reason } = getHardMoveWithReasoning();
-            aiReasoningText.textContent = 'AI is thinking... 🤔';
-
-            setTimeout(() => {
-                aiReasoningText.textContent = reason;
-                cells[move].classList.add('ai-move-highlight');
-
-                setTimeout(() => {
-                    cells[move].classList.remove('ai-move-highlight');
-                    if (!gameState.isGameOver) { // Check if game ended while thinking
-                        makeMove(move, gameState.aiSymbol);
-                    }
-                }, 1200);
-            }, 500);
-        } else {
-            move = getHardMove();
-            makeMove(move, gameState.aiSymbol);
-        }
+        move = getHardMove();
     }
+    makeMove(move, gameState.aiSymbol);
 }
 
 function getAvailableMoves(board = gameState.board) {
@@ -238,17 +270,13 @@ function getMediumMove() {
     return Math.random() < 0.5 ? getEasyMove() : getHardMove();
 }
 
-function getHardMove() {
-    return getHardMoveWithReasoning().move;
-}
-
-function getHardMoveWithReasoning(): { move: number, reason: string } {
+function getHardMove(): number {
     // 1. Check if AI can win in the next move
     for (const move of getAvailableMoves()) {
         const boardCopy = [...gameState.board];
         boardCopy[move] = gameState.aiSymbol;
         if (checkWinnerForMinimax(boardCopy, gameState.aiSymbol)) {
-            return { move, reason: "Completing a winning line to secure victory." };
+            return move;
         }
     }
 
@@ -257,18 +285,18 @@ function getHardMoveWithReasoning(): { move: number, reason: string } {
         const boardCopy = [...gameState.board];
         boardCopy[move] = gameState.playerSymbol;
         if (checkWinnerForMinimax(boardCopy, gameState.playerSymbol)) {
-            return { move, reason: "Blocking an opponent's potential win." };
+            return move;
         }
     }
     
     // 3. If center is free, take it
     if (gameState.board[4] === null) {
-        return { move: 4, reason: "Taking the center for strategic advantage." };
+        return 4;
     }
 
     // 4. Fallback to minimax for optimal move
     const bestMove = minimax(gameState.board, gameState.aiSymbol);
-    return { move: bestMove.index, reason: "Calculating the optimal long-term move." };
+    return bestMove.index;
 }
 
 
@@ -336,9 +364,9 @@ function checkWinnerForMinimax(board: (PlayerSymbol|null)[], player: 'X'|'O') {
 // --- UI UPDATES ---
 
 function drawWinningLine(combo: number[]) {
-    const boardWidth = (boardElement as HTMLElement).offsetWidth;
-    const boardHeight = (boardElement as HTMLElement).offsetHeight;
-    const startCell = cells[combo[0]] as HTMLElement;
+    const boardWidth = boardElement.offsetWidth;
+    const boardHeight = boardElement.offsetHeight;
+    const startCell = cells[combo[0]];
 
     let x1, y1, x2, y2;
 
@@ -461,24 +489,15 @@ function setupEventListeners() {
     startGameBtn.addEventListener('click', () => {
         homeScreen.classList.remove('active');
         gameScreen.classList.add('active');
-        if (gameState.gameMode === 'single' && gameState.difficulty === 'hard') {
-            aiThinkingToggleContainer.style.display = 'flex';
-        } else {
-            aiThinkingToggleContainer.style.display = 'none';
-        }
         resetGame();
     });
 
     // Game Screen
     boardElement.addEventListener('click', handleCellClick);
     
-    playAgainBtn.addEventListener('click', resetGame);
+    playAgainBtn.addEventListener('click', () => showInterstitialAd(resetGame));
     
-    homeBtn.addEventListener('click', goToHomePage);
-
-    aiThinkingToggle.addEventListener('change', () => {
-        gameState.showAiThinking = aiThinkingToggle.checked;
-    });
+    homeBtn.addEventListener('click', () => showInterstitialAd(goToHomePage));
 
     if (navigator.share) {
         shareBtn.addEventListener('click', async () => {
@@ -495,7 +514,7 @@ function setupEventListeners() {
 
             try {
                 await navigator.share({
-                    title: 'Tic-Tac-Toe Neon',
+                    title: 'Tic-Tac-Toe AI',
                     text: shareText,
                     url: 'https://tic-tac-toe-neon.web.app'
                 });
@@ -511,7 +530,55 @@ function setupEventListeners() {
 
 // --- INITIALIZATION ---
 function init() {
+    // Assign DOM elements now that the DOM is loaded
+    homeScreen = document.getElementById('home-screen')!;
+    gameScreen = document.getElementById('game-screen')!;
+    boardElement = document.getElementById('board')!;
+    cells = document.querySelectorAll('.cell');
+    statusText = document.getElementById('status-text')!;
+    
+    // Home Screen Elements
+    singlePlayerBtn = document.getElementById('single-player-btn')!;
+    multiPlayerBtn = document.getElementById('multi-player-btn')!;
+    playerXBtn = document.getElementById('player-x-btn')!;
+    playerOBtn = document.getElementById('player-o-btn')!;
+    difficultySection = document.getElementById('difficulty-section')!;
+    difficultyButtons = document.querySelectorAll('#difficulty-section .btn');
+    startGameBtn = document.getElementById('start-game-btn')!;
+
+    // Game Screen Elements
+    totalGamesEl = document.getElementById('total-games')!;
+    winsEl = document.getElementById('wins')!;
+    lossesEl = document.getElementById('losses')!;
+    drawsEl = document.getElementById('draws')!;
+    playAgainBtn = document.getElementById('play-again-btn')!;
+    homeBtn = document.getElementById('home-btn')!;
+    shareBtn = document.getElementById('share-btn')! as HTMLButtonElement;
+    winLineSvg = document.getElementById('win-line-svg')!;
+    winLine = document.getElementById('win-line') as unknown as SVGLineElement;
+    resultsModal = document.getElementById('results-modal')!;
+    resultsText = document.getElementById('results-text')!;
+
+    // Ad Placeholders
+    interstitialAd = document.getElementById('interstitial-ad-placeholder')!;
+
     setupEventListeners();
+
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(error => {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+        });
+    }
 }
 
-init();
+document.addEventListener('DOMContentLoaded', init);
+
+// Fix: This export statement makes the file a module, which is required for 'declare global' to work.
+export {};
