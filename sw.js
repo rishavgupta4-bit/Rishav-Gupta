@@ -5,7 +5,9 @@ const urlsToCache = [
   '/',
   '/index.html',
   '/index.css',
-  '/index.tsx'
+  '/index.js',
+  '/icon-192x192.png',
+  '/icon-512x512.png'
 ];
 
 // Install the service worker and cache the app shell

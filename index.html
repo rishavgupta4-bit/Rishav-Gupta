@@ -6,61 +6,59 @@
     <title>Tic-Tac-Toe AI</title>
     <link rel="stylesheet" href="index.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1f033a">
-    <!-- Adsense script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2520621268641327"
      crossorigin="anonymous"></script>
 </head>
 <body>
     <div id="app-container">
         <!-- Home Screen -->
-        <div id="home-screen" class="screen active">
+        <div id="home-screen" class="screen">
             <h1>Tic-Tac-Toe AI</h1>
             
-            <div class="settings-section">
+            <div class="options-group">
                 <h2>Game Mode</h2>
-                <div class="btn-group">
-                    <button id="single-player-btn" class="btn active">Single Player</button>
-                    <button id="multi-player-btn" class="btn">Multiplayer</button>
+                <div class="button-group">
+                    <button id="single-player-btn" class="option-btn active">Single Player</button>
+                    <button id="multiplayer-btn" class="option-btn">Multiplayer</button>
                 </div>
             </div>
 
-            <div class="settings-section">
+            <div class="options-group">
                 <h2>Choose Your Side</h2>
-                <div class="btn-group">
-                    <button id="player-x-btn" class="btn player-choice active">X</button>
-                    <button id="player-o-btn" class="btn player-choice">O</button>
+                <div class="button-group">
+                    <button id="player-x-btn" class="option-btn player-symbol-btn active">X</button>
+                    <button id="player-o-btn" class="option-btn player-symbol-btn">O</button>
                 </div>
             </div>
 
-            <div id="difficulty-section" class="settings-section">
+            <div id="difficulty-section" class="options-group">
                 <h2>Difficulty</h2>
-                <div class="btn-group">
-                    <button class="btn active" data-difficulty="easy">Easy</button>
-                    <button class="btn" data-difficulty="medium">Medium</button>
-                    <button class="btn" data-difficulty="hard">Hard</button>
+                <div class="button-group">
+                    <button id="easy-btn" class="option-btn difficulty-btn active">Easy</button>
+                    <button id="medium-btn" class="option-btn difficulty-btn">Medium</button>
+                    <button id="hard-btn" class="option-btn difficulty-btn">Hard</button>
                 </div>
             </div>
 
-            <button id="start-game-btn" class="btn btn-large">Start Game</button>
+            <button id="start-game-btn" class="start-btn">Play Game</button>
         </div>
 
         <!-- Game Screen -->
-        <div id="game-screen" class="screen">
+        <div id="game-screen" class="screen hidden">
             <header class="game-header">
-                <div class="scoreboard">
+                <div class="score-container">
                     <div class="score-item">Total: <span id="total-games">0</span></div>
                     <div class="score-item">Wins: <span id="wins">0</span></div>
                     <div class="score-item">Losses: <span id="losses">0</span></div>
                     <div class="score-item">Draws: <span id="draws">0</span></div>
                 </div>
-                 <div class="status-container">
-                    <p id="status-text">Player X's Turn</p>
+                <div class="status-container">
+                     <p id="status-text">Player X's Turn</p>
                 </div>
             </header>
-            
+
             <div id="board-container">
-                <div id="board">
+                <div id="board" class="board">
                     <div class="cell" data-index="0"></div>
                     <div class="cell" data-index="1"></div>
                     <div class="cell" data-index="2"></div>
@@ -71,33 +69,23 @@
                     <div class="cell" data-index="7"></div>
                     <div class="cell" data-index="8"></div>
                 </div>
-                <svg id="win-line-svg" class="win-line-container">
-                    <line id="win-line" class="win-line" />
+                <svg id="win-line-svg" class="win-line-svg">
+                    <path id="win-path" class="win-line"></path>
                 </svg>
             </div>
 
-            <footer class="game-footer">
-                <button id="play-again-btn" class="btn">Play Again</button>
-                <button id="share-btn" class="btn">Share</button>
-                <button id="home-btn" class="btn">Home Page</button>
-            </footer>
-        </div>
-    </div>
 
-    <!-- Overlays -->
-    <div id="results-modal" class="modal-overlay">
-        <div class="modal-content">
-            <p id="results-text"></p>
+            <div class="game-footer">
+                <button id="play-again-btn">Play Again</button>
+                <button id="share-btn">Share</button>
+                <button id="home-btn">Home Page</button>
+            </div>
         </div>
     </div>
-    <div id="interstitial-ad-placeholder" class="modal-overlay">
-        <div class="modal-content">
-            <p>Loading Ad...</p>
-        </div>
-    </div>
-
-    <!-- Banner Ad -->
+    
+    <!-- Ad Placeholders -->
     <div id="banner-ad-container">
+        <!-- Ad code will be injected here or use this as a placeholder -->
          <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-2520621268641327"
@@ -105,7 +93,21 @@
             data-ad-format="auto"
             data-full-width-responsive="true"></ins>
     </div>
+    <div id="interstitial-ad-placeholder" class="hidden">
+        <div class="ad-content">
+            <h2>Loading Ad...</h2>
+            <p>Your game will resume shortly.</p>
+        </div>
+    </div>
+    
+    <!-- Results Modal -->
+    <div id="results-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p id="results-text"></p>
+        </div>
+    </div>
 
-    <script type="module" src="index.tsx"></script>
+
+    <script src="index.js"></script>
 </body>
 </html>
