@@ -35,7 +35,6 @@
                 <h2>Difficulty</h2>
                 <div class="button-group">
                     <button id="easy-btn" class="option-btn difficulty-btn active">Easy</button>
-                    <button id="medium-btn" class="option-btn difficulty-btn">Medium</button>
                     <button id="hard-btn" class="option-btn difficulty-btn">Hard</button>
                 </div>
             </div>
@@ -53,29 +52,31 @@
                     <div class="score-item">Draws: <span id="draws">0</span></div>
                 </div>
                 <div class="status-container">
-                     <p id="status-text">Player X's Turn</p>
+                     <p id="status-text" aria-live="polite">Player X's Turn</p>
                 </div>
             </header>
 
             <div id="board-container">
                 <div id="board" class="board">
-                    <div class="cell" data-index="0"></div>
-                    <div class="cell" data-index="1"></div>
-                    <div class="cell" data-index="2"></div>
-                    <div class="cell" data-index="3"></div>
-                    <div class="cell" data-index="4"></div>
-                    <div class="cell" data-index="5"></div>
-                    <div class="cell" data-index="6"></div>
-                    <div class="cell" data-index="7"></div>
-                    <div class="cell" data-index="8"></div>
+                    <button class="cell" data-index="0"></button>
+                    <button class="cell" data-index="1"></button>
+                    <button class="cell" data-index="2"></button>
+                    <button class="cell" data-index="3"></button>
+                    <button class="cell" data-index="4"></button>
+                    <button class="cell" data-index="5"></button>
+                    <button class="cell" data-index="6"></button>
+                    <button class="cell" data-index="7"></button>
+                    <button class="cell" data-index="8"></button>
                 </div>
-                <svg id="win-line-svg" class="win-line-svg">
+                <svg id="win-line-svg" class="win-line-svg hidden">
                     <path id="win-path" class="win-line"></path>
                 </svg>
+                <div id="result-notification" class="hidden">
+                    <p id="result-notification-text"></p>
+                </div>
             </div>
 
-
-            <div class="game-footer">
+            <div id="game-footer">
                 <button id="play-again-btn">Play Again</button>
                 <button id="share-btn">Share</button>
                 <button id="home-btn">Home Page</button>
@@ -99,15 +100,7 @@
             <p>Your game will resume shortly.</p>
         </div>
     </div>
-    
-    <!-- Results Modal -->
-    <div id="results-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <p id="results-text"></p>
-        </div>
-    </div>
 
-
-    <script src="index.js"></script>
+    <script src="index.js" defer></script>
 </body>
 </html>

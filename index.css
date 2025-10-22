@@ -198,11 +198,21 @@ h2 {
     cursor: pointer;
     transition: background-color 0.3s ease;
     animation: scaleIn 0.3s ease-out;
+    /* Button Resets */
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    color: inherit;
 }
 
-.cell:hover {
+.cell:hover:not(:disabled) {
     background-color: #1f033a;
 }
+
+.cell:disabled {
+    cursor: not-allowed;
+}
+
 
 .cell.X {
     color: var(--x-color);
@@ -237,16 +247,40 @@ h2 {
     animation: pulseLine 0.8s infinite;
 }
 
-/* Footer */
-.game-footer {
-    width: 100%;
+/* Result Notification */
+#result-notification {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: rgba(10, 1, 26, 0.85);
+    padding: 1.5rem 2.5rem;
+    border-radius: 15px;
+    border: 1px solid var(--primary-neon);
+    box-shadow: 0 0 15px var(--primary-glow);
+    z-index: 100;
+    pointer-events: none;
+    animation: fadeInOut 2s ease-in-out forwards;
+}
+
+#result-notification p {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    text-shadow: 0 0 8px var(--white-glow);
+    white-space: nowrap;
+}
+
+
+/* Game Footer */
+#game-footer {
     display: flex;
     justify-content: center;
     gap: 1rem;
+    width: 100%;
     margin-top: 2rem;
 }
 
-.game-footer button {
+#game-footer button {
     flex: 1;
     max-width: 150px;
     padding: 0.8rem;
@@ -261,11 +295,12 @@ h2 {
     box-shadow: 0 0 5px var(--primary-glow), inset 0 0 5px rgba(159, 85, 255, 0.3);
 }
 
-.game-footer button:hover {
+#game-footer button:hover {
     background-color: var(--primary-neon);
     box-shadow: 0 0 15px var(--primary-glow), 0 0 25px var(--primary-glow), inset 0 0 10px rgba(255, 255, 255, 0.4);
     transform: scale(1.05);
 }
+
 
 /* --- Ads --- */
 #banner-ad-container {
@@ -300,31 +335,22 @@ h2 {
     display: none;
 }
 
-/* --- Modal --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-}
-
-.modal-content {
-    background-color: var(--bg-dark-purple);
-    padding: 2rem 3rem;
-    border-radius: 15px;
-    border: 2px solid var(--primary-neon);
-    box-shadow: 0 0 20px var(--primary-glow);
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
 /* --- Animations --- */
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    15%, 85% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+
 @keyframes scaleIn {
     from {
         transform: scale(0.5);
