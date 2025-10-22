@@ -1,28 +1,9 @@
 // --- DOM Elements ---
-const homeScreen = document.getElementById('home-screen');
-const gameScreen = document.getElementById('game-screen');
-const singlePlayerBtn = document.getElementById('single-player-btn');
-const multiplayerBtn = document.getElementById('multiplayer-btn');
-const playerXBtn = document.getElementById('player-x-btn');
-const playerOBtn = document.getElementById('player-o-btn');
-const difficultySection = document.getElementById('difficulty-section');
-const easyBtn = document.getElementById('easy-btn');
-const hardBtn = document.getElementById('hard-btn');
-const startGameBtn = document.getElementById('start-game-btn');
-const cells = document.querySelectorAll('.cell');
-const statusText = document.getElementById('status-text');
-const totalGamesEl = document.getElementById('total-games');
-const winsEl = document.getElementById('wins');
-const lossesEl = document.getElementById('losses');
-const drawsEl = document.getElementById('draws');
-const playAgainBtn = document.getElementById('play-again-btn');
-const shareBtn = document.getElementById('share-btn');
-const homeBtn = document.getElementById('home-btn');
-const winLineSVG = document.getElementById('win-line-svg');
-const winPath = document.getElementById('win-path');
-const interstitialAdPlaceholder = document.getElementById('interstitial-ad-placeholder');
-const resultNotification = document.getElementById('result-notification');
-const resultNotificationText = document.getElementById('result-notification-text');
+// Declare variables in a higher scope to be accessible by all functions
+let homeScreen, gameScreen, singlePlayerBtn, multiplayerBtn, playerXBtn, playerOBtn,
+    difficultySection, easyBtn, hardBtn, startGameBtn, cells, statusText,
+    totalGamesEl, winsEl, lossesEl, drawsEl, playAgainBtn, shareBtn, homeBtn,
+    winLineSVG, winPath, interstitialAdPlaceholder, resultNotification, resultNotificationText;
 
 // --- Game State ---
 const gameState = {
@@ -470,5 +451,34 @@ function showInterstitialAd(callback) {
 }
 
 // --- Init ---
-setupEventListeners();
-registerServiceWorker();
+document.addEventListener('DOMContentLoaded', () => {
+    // Assign elements
+    homeScreen = document.getElementById('home-screen');
+    gameScreen = document.getElementById('game-screen');
+    singlePlayerBtn = document.getElementById('single-player-btn');
+    multiplayerBtn = document.getElementById('multiplayer-btn');
+    playerXBtn = document.getElementById('player-x-btn');
+    playerOBtn = document.getElementById('player-o-btn');
+    difficultySection = document.getElementById('difficulty-section');
+    easyBtn = document.getElementById('easy-btn');
+    hardBtn = document.getElementById('hard-btn');
+    startGameBtn = document.getElementById('start-game-btn');
+    cells = document.querySelectorAll('.cell');
+    statusText = document.getElementById('status-text');
+    totalGamesEl = document.getElementById('total-games');
+    winsEl = document.getElementById('wins');
+    lossesEl = document.getElementById('losses');
+    drawsEl = document.getElementById('draws');
+    playAgainBtn = document.getElementById('play-again-btn');
+    shareBtn = document.getElementById('share-btn');
+    homeBtn = document.getElementById('home-btn');
+    winLineSVG = document.getElementById('win-line-svg');
+    winPath = document.getElementById('win-path');
+    interstitialAdPlaceholder = document.getElementById('interstitial-ad-placeholder');
+    resultNotification = document.getElementById('result-notification');
+    resultNotificationText = document.getElementById('result-notification-text');
+
+    // Initialize the app
+    setupEventListeners();
+    registerServiceWorker();
+});
